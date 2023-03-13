@@ -1,0 +1,74 @@
+scalar Date
+scalar Array
+scalar Object
+scalar Number
+
+input CreateCategoryInputType {
+  description: String
+  name: String!
+  parentId: String
+}
+
+enum UpdateCategoryEnum {
+  active
+  deactivate
+}
+
+input UpdateCategoryInputType {
+  categoryId: String
+  description: String
+  name: String
+  status: UpdateCategoryEnum
+}
+
+type CategoryReturnSchema {
+  _id: String
+  createdAt: Date
+  description: String
+  level: Number
+  name: String
+  status: String
+  slug: String
+}
+
+type ResponseSchema {
+  message: String
+  code: Number
+}
+
+input DeleteCategoryInputType {
+  categoryId: String
+}
+
+input CategoryQueryDataType {
+  searchKeyword: String
+}
+
+type CategoriesSchema {
+  _id: String
+  children: Array
+  createdAt: Date
+  description: String
+  level: Number
+  name: String
+  status: String
+  slug: String
+}
+
+input OptionQueryData {
+  limit: Number
+  skip: Number
+}
+
+type Query {
+  getCategories(
+    queryData: CategoryQueryDataType
+    optionData: OptionQueryData
+  ): [CategoriesSchema]
+}
+
+type Mutation {
+  createCategory(inputData: CreateCategoryInputType): CategoryReturnSchema
+  deleteCategory(inputData: DeleteCategoryInputType): ResponseSchema
+  updateCategory(inputData: UpdateCategoryInputType): CategoryReturnSchema
+}
