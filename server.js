@@ -1,4 +1,6 @@
-import { ApolloServer } from 'apollo-server-express';
+import { ApolloServer } from '@apollo/server';
+import { expressMiddleware } from '@apollo/server/express4';
+import bodyParser from 'body-parser'
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import { createServer } from 'http';
@@ -24,22 +26,23 @@ dotenv.config();
     }))
 
     // Apollo server connection
-    serverConfig.context = ({ event, context }) => {
-        return { event, ...context, redis: RedisClient }
-    }
     const server = new ApolloServer(serverConfig)
     await server.start();
 
-    server.applyMiddleware({
-        app,
-        path: '/',
-        cors: true
-    });
+    app.use(
+        cors(),
+        bodyParser.json(),
+        expressMiddleware(server, {
+            context: ({ event, context }) => {
+                return { event, ...context, redis: RedisClient }
+            }
+        }),
+    );
 
-    // Database  connection
+    // Database connection
     dbConnection()
+
     const PORT = process.env.PORT || 4000
-    httpServer.listen(PORT, () => {
-        console.log(`🚀 Server ready at http://localhost:${PORT}${server?.graphqlPath}`)
-    })
+    await new Promise((resolve) => httpServer.listen({ port: PORT }, resolve));
+    console.log(`🚀 Server ready at http://localhost:${PORT}`)
 })();

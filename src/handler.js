@@ -1,14 +1,7 @@
-import {
-    ApolloServerPluginLandingPageGraphQLPlayground
-} from 'apollo-server-core';
-
 import typeDefs from '../src/graphql/typeDefs';
 import resolvers from '../src/graphql/resolvers'
 
 const serverConfig = {
-    plugins: [
-        ApolloServerPluginLandingPageGraphQLPlayground()
-    ],
     typeDefs,
     resolvers,
     playground: true,
