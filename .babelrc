@@ -1,0 +1,23 @@
+{
+  "presets": [
+    [
+      "env",
+      {
+        "targets": {
+          "node": "current"
+        }
+      }
+    ]
+  ],
+  "plugins": [
+    [
+      "babel-plugin-module-name-mapper",
+      {
+        "moduleNameMapper": {
+          "!!graphql-tag/loader!(.*)": "$1"
+        }
+      }
+    ],
+    "import-graphql"
+  ]
+}
