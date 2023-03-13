@@ -28,7 +28,7 @@ export const getCategories = async (body = {}, redisClient) => {
 
   const nestedCategory = buildNestedCategory(categories)
   await redisClient.set(`nestedCategory-${searchKeyword}-${limit}-${skip}`, JSON.stringify(nestedCategory), 60 * 60 * 24)
-  console.log({ nestedCategory })
+
   return nestedCategory
 }
 
