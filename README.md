@@ -1,14 +1,14 @@
-# C-commerce categories
+# E-commerce categories
 
 ## Contents
 
-- [Project install](#project_install)
+- [Project installation](#project_installation)
 - [Running the application](#running-the-application)
 - [Languages & tools](#tools)
 
-## Project install
+## Project installation
 
-- To install the project first you need to clone the project, open your terminal and run the following command
+- To install the project first you need to clone the project, then open your terminal and run the following command
 
 ```sh
 > git clone https://github.com/sakibhasancse/Categories.git
@@ -24,8 +24,6 @@
 - [Redis](https://redis.js.org/)
 
 ##### Steps
-
-#### Server commands
 
 - Create a `.env` file and Add the below entries or change accordingly. You can follow the `.env.sample` file to see the format.
 
@@ -43,6 +41,15 @@ cd Categories
 npm install
 npm start
 ```
+
+- After completing this process the server will be ready for testing, you will see the following logs
+
+```sh
+🚀 Server ready at http://localhost:4000
+MongoDB Connected: localhost
+```
+
+- Open your browser and visit this http://localhost:4000 url
 
 ## Languages & tools
 
