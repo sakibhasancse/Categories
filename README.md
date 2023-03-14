@@ -1,5 +1,6 @@
 # E-commerce categories
 Multi level nested category using graphql
+
 ## Contents
 
 - [Project installation](#project_installation)
@@ -59,3 +60,8 @@ MongoDB Connected: localhost
 - [Express](https://expressjs.com/)
 - [GraphQL Apollo Server v4](https://www.apollographql.com/docs/apollo-server)
 - [Redis](https://redis.js.org/)
+
+
+Apollo playground 
+
+![Screenshot 2023-03-14 at 5 00 30 AM](https://user-images.githubusercontent.com/57236854/224851265-ebccc429-d371-4fa9-9adc-97459139d7fc.png)
