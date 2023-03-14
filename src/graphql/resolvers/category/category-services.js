@@ -45,48 +45,37 @@ export const createCategory = async (inputData, redisClient) => {
     return category
 }
 
-
-const deleteChildCategories = async (categoryId) => {
+const getAllChildCategoryIds = async (categoryId, results = []) => {
     const childCategories = await CategoryCollection.find({ parentId: categoryId });
+
+    const childIds = results
     for (const childCategory of childCategories) {
-        await deleteChildCategories(childCategory._id);
+        childIds.push(childCategory._id)
+        await getAllChildCategoryIds(childCategory._id, childIds);
     }
-    await CategoryCollection.findByIdAndDelete(categoryId);
-    return false
+    return childIds
 };
 
 export const deleteCategory = async (inputData = {}, redisClient) => {
     const { categoryId } = inputData
     if (!categoryId) throw new CustomError(404, 'CategoryId is required')
     // Find the category to delete
-    const category = await CategoryCollection.deleteOne({
+    const category = await CategoryCollection.findOne({
         _id: categoryId
     })
 
-    if (!category?.deletedCount) throw new CustomError(404, `Category with id ${categoryId} not found`)
+    if (!category) throw new CustomError(404, `Category with id ${categoryId} not found`)
 
     // Find all child categories and delete them recursively
-    await deleteChildCategories(categoryId);
+    const childIds = await getAllChildCategoryIds(categoryId, [categoryId]);
+
+    if (size(childIds)) await CategoryCollection.deleteMany({ _id: { $in: childIds } })
     await removeRedisCachingUsingKeys(redisClient, 'nestedCategory')
     return {
         message: 'Successfully deleted category',
         code: 200
     }
 }
-
-const deactivateChildCategories = async (categoryId, status) => {
-    const childCategories = await CategoryCollection.find({ parentId: categoryId });
-    for (const childCategory of childCategories) {
-        await deactivateChildCategories(childCategory._id);
-    }
-    await CategoryCollection.findOneAndUpdate({ _id: categoryId },
-        {
-            $set: {
-                status: 'deactivate'
-            }
-        });
-    return false
-};
 
 export const updateCategory = async (inputData = {}, redisClient) => {
     const { categoryId, description, name, status } = inputData
@@ -112,8 +101,19 @@ export const updateCategory = async (inputData = {}, redisClient) => {
     if (description) updateData.description = description
     if (status && category.status !== status) {
         updateData.status = status
-        // Find all child categories and update them recursively
-        if (status === 'deactivate') await deactivateChildCategories(categoryId)
+
+        if (status === 'deactivate') {
+            // Find all child categories and update them recursively
+            const childIds = await getAllChildCategoryIds(categoryId);
+            if (size(childIds)) {
+                await CategoryCollection.updateMany({ _id: { $in: childIds } },
+                    {
+                        $set: {
+                            status: 'deactivate'
+                        }
+                    });
+            }
+        }
     }
 
     if (!size(updateData)) {
